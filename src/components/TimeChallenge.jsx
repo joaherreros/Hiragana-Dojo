@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import Respuesta from "./Respuesta";
-import Hiragana from "./hiragana";
+import Hiragana from "./Hiragana";
 import CorrectSFX from "../assets/sfx/correctsfx.mp3";
 import WrongSFX from "../assets/sfx/wrongsfx.mp3";
 import hiraganas from "./hiraganas";
