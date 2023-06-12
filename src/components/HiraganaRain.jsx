@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import hiraganas from "./hiraganas";
 
 const HiraganaRain = () => {
-  const numHiraganas = 40; // Número de hiraganas que caen
+  const numHiraganas = 34; // Número de hiraganas que caen
   const hiraganaChars = Object.keys(hiraganas); // Caracteres hiragana
 
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
