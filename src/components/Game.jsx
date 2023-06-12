@@ -1,85 +1,14 @@
 import React, { useState } from "react";
+import Modal from "react-modal";
 import Respuesta from "./Respuesta";
-import Vidas from "./Vidas";
+import Vidas from "./Lives";
 import Hiragana from "./hiragana";
-import CorrectSFX from "../assets/sfx/correctsfx.mp3"
-import WrongSFX from "../assets/sfx/wrongsfx.mp3"
+import CorrectSFX from "../assets/sfx/correctsfx.mp3";
+import WrongSFX from "../assets/sfx/wrongsfx.mp3";
+import hiraganas from "./hiraganas";
+import GameEnd from "./GameEnd";
 
 export default function Game({ actualizarPantalla }) {
-  const hiraganas = {
-    あ: "a",
-    い: "i",
-    う: "u",
-    え: "e",
-    お: "o",
-    か: "ka",
-    き: "ki",
-    く: "ku",
-    け: "ke",
-    こ: "ko",
-    さ: "sa",
-    し: "shi",
-    す: "su",
-    せ: "se",
-    そ: "so",
-    た: "ta",
-    ち: "chi",
-    つ: "tsu",
-    て: "te",
-    と: "to",
-    な: "na",
-    に: "ni",
-    ぬ: "nu",
-    ね: "ne",
-    の: "no",
-    は: "ha",
-    ひ: "hi",
-    ふ: "fu",
-    へ: "he",
-    ほ: "ho",
-    ま: "ma",
-    み: "mi",
-    む: "mu",
-    め: "me",
-    も: "mo",
-    や: "ya",
-    ゆ: "yu",
-    よ: "yo",
-    ら: "ra",
-    り: "ri",
-    る: "ru",
-    れ: "re",
-    ろ: "ro",
-    わ: "wa",
-    を: "wo",
-    ん: "n",
-    が: "ga",
-    ぎ: "gi",
-    ぐ: "gu",
-    げ: "ge",
-    ご: "go",
-    ざ: "za",
-    じ: "ji",
-    ず: "zu",
-    ぜ: "ze",
-    ぞ: "zo",
-    だ: "da",
-    ぢ: "ji",
-    づ: "zu",
-    で: "de",
-    ど: "do",
-    ば: "ba",
-    び: "bi",
-    ぶ: "bu",
-    べ: "be",
-    ぼ: "bo",
-    ぱ: "pa",
-    ぴ: "pi",
-    ぷ: "pu",
-    ぺ: "pe",
-    ぽ: "po",
-  };
-
   const hiraganaKeys = Object.keys(hiraganas);
 
   const [hiraganaRandom, setHiraganaRandom] = useState("あ");
@@ -88,6 +17,9 @@ export default function Game({ actualizarPantalla }) {
   const [ansCount, setAnsCount] = useState(0);
   const [WrongAudio] = useState(new Audio(WrongSFX));
   const [CorrectAudio] = useState(new Audio(CorrectSFX));
+  const [showGameEndModal, setShowGameEndModal] = useState(false);
+  const [testingMode, setTestingMode] = useState(false);
+  const [respuestasCorrectas, setRespuestasCorrectas] = useState([]);
 
   const randomizar = () => {
     const randomIndex = Math.floor(Math.random() * hiraganaKeys.length);
@@ -106,28 +38,76 @@ export default function Game({ actualizarPantalla }) {
       newLives.pop();
       setLives(newLives);
     } else {
-      actualizarPantalla("GameEnd");
+      setShowGameEndModal(true);
     }
-    WrongAudio.play()
+    WrongAudio.play();
   };
 
   const sumRightAns = () => {
     setAnsCount(ansCount + 1);
-    CorrectAudio.play()
+    CorrectAudio.play();
+    setRespuestasCorrectas([...respuestasCorrectas, respuesta]);
+  };
+
+  const handleToggleTestingMode = () => {
+    setTestingMode(!testingMode);
   };
 
   return (
     <>
       <button onClick={handleGoBack}>Back to Menu</button>
       <Vidas lives={lives} />
+      <label>
+        Testing Mode:
+        <input
+          type="checkbox"
+          checked={testingMode}
+          onChange={handleToggleTestingMode}
+        />
+      </label>
+
       <Hiragana hiraganaRandom={hiraganaRandom} />
+
+      {testingMode && <p>Right answer: {respuesta}</p>}
+
       <Respuesta
         randomizar={randomizar}
         correctAnswer={respuesta}
         takeLife={takeLife}
         sumRightAns={sumRightAns}
       />
-      <p>Correct answers: {ansCount}</p>
+      <p>Right answers: {ansCount}</p>
+
+      <Modal
+        isOpen={showGameEndModal}
+        onRequestClose={() => setShowGameEndModal(false)}
+        contentLabel="Game Over"
+        shouldCloseOnOverlayClick={false}
+        style={{
+          content: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#242424",
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            transform: "translate(-50%, -50%)",
+            maxWidth: "100%",
+            maxHeight: "100%",
+            overflow: "auto",
+            padding: 100,
+            borderRadius: "30px",
+          },
+        }}
+      >
+        <GameEnd
+          actualizarPantalla={actualizarPantalla}
+          respuestasCorrectas={ansCount}
+        />
+      </Modal>
     </>
   );
 }

@@ -149,3 +149,7 @@ input{
     transform: translateY(-100%);
   }
 }
+
+.modal-overlay {
+  background-color: "rgba(0, 0, 0, 0,1)";
+}

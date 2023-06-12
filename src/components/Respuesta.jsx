@@ -31,12 +31,12 @@ export default function Respuesta({ randomizar, correctAnswer, takeLife, sumRigh
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Ingresa tu respuesta"
+          placeholder="Type your answer"
           value={respuesta}
           onChange={handleChange}
         />
         <button type="submit" disabled={respuesta.trim() === ""}>
-          Enviar
+          Send
         </button>
       </form>
     </div>
